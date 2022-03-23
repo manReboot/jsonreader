@@ -7,8 +7,11 @@ import lombok.extern.java.Log;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -28,7 +31,15 @@ public class GenFile {
         Optional<Skeleton> obj = convertJsonToPojo(url);
 
         obj.ifPresent(
-               value-> printTable(obj)
+               value-> {
+                   try {
+                       printTable(obj);
+                   } catch (URISyntaxException e) {
+                      log.error(e);
+                   } catch (IOException e) {
+                       log.error(e);
+                   }
+               }
         );
         obj.orElseThrow(()-> new Exception("Json not readable"));
     }
@@ -37,7 +48,7 @@ public class GenFile {
      * Based on the
      * @param obj
      */
-    private void printTable(Optional<Skeleton> obj) {
+    private void printTable(Optional<Skeleton> obj) throws URISyntaxException, IOException {
 
         Items listItem = obj.get().getItems();
         List<String> output = new ArrayList<String>();
@@ -65,16 +76,41 @@ public class GenFile {
 
         );
 
-        Optional.ofNullable(output).ifPresentOrElse(
-                value -> System.out.format("%-10s%-20s%-20s%-20s%-10s\n", "Id", "Type","Name", "Batter","Topping"),
-                () -> System.out.println("No record")        );
+        String header=String.format("%-10s%-20s%-20s%-20s%-10s\n", "Id", "Type","Name", "Batter","Topping");
+
         output.forEach(
                 out -> {
                     System.out.println(out);
                 }
         );
+
+        writeToFile(header,output);
+
     }
 
+    private void writeToFile(String header, List<String>output) throws URISyntaxException, IOException {
+        URL resource = ClassLoader.getSystemResource("output.txt");
+        File file = Paths.get(resource.toURI()).toFile();
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+
+        writer.write(header);
+
+        try(writer)
+        {
+            for(String temp : output)
+            {
+                writer.write(temp);
+                writer.newLine();
+            }
+        }catch(Exception ex)
+        {
+            log.error(ex);
+        }
+
+
+
+}
     private Optional<Skeleton> convertJsonToPojo(URL url) {
         ObjectMapper mapper = new ObjectMapper();
         Skeleton tempClass = null;
