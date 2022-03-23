@@ -1,9 +1,6 @@
 package com.ace.gen;
 
-import com.ace.service.Start;
 import com.sun.codemodel.JCodeModel;
-import lombok.extern.java.Log;
-import lombok.extern.log4j.Log4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsonschema2pojo.*;
@@ -12,10 +9,10 @@ import org.jsonschema2pojo.rules.RuleFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.function.Supplier;
 
+/**
+ * This class been used to generate the POJO class for given json object
+ */
 public class PojoClass {
     private static final Logger LOGGER = LogManager.getLogger(PojoClass.class);
 

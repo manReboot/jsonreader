@@ -3,14 +3,12 @@ package com.ace.service;
 import com.ace.model.Items;
 import com.ace.model.Skeleton;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.java.Log;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +31,7 @@ public class GenFile {
         obj.ifPresent(
                value-> {
                    try {
-                       printTable(obj);
+                       formatData(obj);
                    } catch (URISyntaxException e) {
                       log.error(e);
                    } catch (IOException e) {
@@ -48,7 +46,7 @@ public class GenFile {
      * Based on the
      * @param obj
      */
-    private void printTable(Optional<Skeleton> obj) throws URISyntaxException, IOException {
+    private void formatData(Optional<Skeleton> obj) throws URISyntaxException, IOException {
 
         Items listItem = obj.get().getItems();
         List<String> output = new ArrayList<String>();
